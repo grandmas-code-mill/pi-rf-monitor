@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pi-rf-monitor"
+version = "1.0.0a1"
+requires-python = ">=3.14" # Earliest stable release available for download on all platforms - 2026
+dependencies = [
+    "numpy",
+    "scipy",
+    "matplotlib",
+]
+readme = "README.md"
+license = "Unlicense"
+keywords = ["raspbian", "raspberry pi", "rtlsdr", "radio", "DSP", "AWS"]
+
+[project.optional-dependencies]
+sdr = ["pyrtlsdr"]          # For RTL-SDR dongle when connected to Pi
+dev = ["pytest", "ruff"]    # Linting and unit testing.
+
+[project.scripts]
+rfmon = "rfmon.cli:main"  
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

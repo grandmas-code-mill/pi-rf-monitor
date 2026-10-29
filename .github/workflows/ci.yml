@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: edge
+    steps:
+      - uses: actions/checkout@v7         
+      - uses: actions/setup-python@v7     
+        with:
+          python-version: "3.14"
+      - run: pip install -e ".[dev]"       # project + dev tools
+      - run: ruff check .                  # Lint
+      - run: pytest                        # Test
