@@ -2,5 +2,6 @@
 
 import rfmon
 
+
 def test_placeholder():
   assert rfmon is not None
