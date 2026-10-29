@@ -1,6 +1,10 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "pi-rf-monitor"
-dynamic = "1.0.0a1"
+version = "1.0.0a1"
 requires-python = ">=3.14" # Earliest stable release available for download on all platforms - 2026
 dependencies = [
     "numpy",
@@ -16,4 +20,10 @@ sdr = ["pyrtlsdr"]          # For RTL-SDR dongle when connected to Pi
 dev = ["pytest", "ruff"]    # Linting and unit testing.
 
 [project.scripts]
-rfmon = "rfmon.cli:main"    # Lets you type `rfmon` in the terminal later
+rfmon = "rfmon.cli:main"  
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
