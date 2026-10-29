@@ -31,7 +31,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/grandmas-code-mill/pi-rf-monitor/tree/main">
-    <img src="docs/images/readme_image.png" alt="Logo" width="80" height="80">
+    <img src="docs/images/readme_image2.png" alt="Logo" width="80" height="80">
   </a>
 
   <h3 align="center">rf-pi-monitor</h3>
