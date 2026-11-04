@@ -1,21 +1,12 @@
 <!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
 <a id="readme-top"></a>
-<!--
-*** Thanks for checking out the Best-README-Template. If you have a suggestion
-*** that would make this better, please fork the repo and create a pull request
-*** or simply open an issue with the tag "enhancement".
-*** Don't forget to give the project a star!
-*** Thanks again! Now go create something AMAZING! :D
--->
 
 
 
 <!-- PROJECT SHIELDS -->
 <!--
-*** I'm using markdown "reference style" links for readability.
-*** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
-*** See the bottom of this document for the declaration of the reference variables
-*** for contributors-url, forks-url, etc. This is an optional, concise syntax you may use.
+*** Reference-style links are used for readability.
+*** See the bottom of this document for the link definitions.
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
 
@@ -30,19 +21,20 @@
     <img src="docs/images/readme_image2.png" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">rf-pi-monitor</h3>
+  <h3 align="center">pi-rf-monitor</h3>
 
   <p align="center">
-    Lorem ipsum!
+    A Raspberry Pi edge sensor that listens to real radio signals, processes them with DSP, and streams the results to a cloud dashboard.
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
+    <a href="docs/"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
+    <!-- TODO: link to a demo video or GIF once Sprint 1 is complete -->
+    <a href="#usage">View Demo</a>
     &middot;
-    <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
+    <a href="https://github.com/grandmas-code-mill/pi-rf-monitor/issues/new?labels=bug">Report Bug</a>
     &middot;
-    <a href="https://github.com/othneildrew/Best-README-Template/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
+    <a href="https://github.com/grandmas-code-mill/pi-rf-monitor/issues/new?labels=enhancement">Request Feature</a>
   </p>
 </div>
 
@@ -79,18 +71,22 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+<!-- TODO: replace with a screenshot or GIF of the live spectrogram -->
+[![pi-rf-monitor screenshot][product-screenshot]](#usage)
 
-There are many great README templates available on GitHub; however, I didn't find one that really suited my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
+pi-rf-monitor turns a Raspberry Pi and a low-cost RTL-SDR receiver into a radio monitoring station. The Pi captures raw radio samples, processes them with digital signal processing (DSP), and identifies what it hears. Results stream to AWS, where a web dashboard shows a live spectrum view and a map of nearby aircraft.
 
-Here's why:
-* Your time should be focused on creating something amazing. A project that solves a problem and helps others
-* You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should implement DRY principles to the rest of your life :smile:
+What it does:
+* **Captures RF** from roughly 24 MHz to 1.7 GHz, and saves raw IQ samples for live or offline processing
+* **Visualizes the spectrum** with a live scrolling spectrogram (waterfall), labeled in real frequencies
+* **Demodulates FM broadcast radio** into listenable audio, proving the full DSP chain end to end
+* **Tracks aircraft** by decoding ADS-B position broadcasts at 1090 MHz *(planned)*
+* **Classifies signals** with a small neural network trained on spectrograms *(planned)*
+* **Streams to the cloud** with a containerized backend on AWS and Kubernetes *(planned)*
 
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue. Thanks to all the people who have contributed to expanding this template!
+The project is receive-only. It never transmits.
 
-Use the `BLANK_README.md` to get started.
+Development runs in two-week Scrum sprints tracked in Jira, with every change going through a pull request and automated linting and tests in GitHub Actions.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -98,9 +94,12 @@ Use the `BLANK_README.md` to get started.
 
 ### Built With
 
-This section should list any major frameworks/libraries used to bootstrap your project. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
-
 * [![Python][Python]][Python-url]
+* [![NumPy][NumPy]][NumPy-url]
+* [![SciPy][SciPy]][SciPy-url]
+* [![Matplotlib][Matplotlib]][Matplotlib-url]
+* [![Raspberry Pi][RaspberryPi]][RaspberryPi-url]
+* [![GitHub Actions][GitHubActions]][GitHubActions-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -109,39 +108,52 @@ This section should list any major frameworks/libraries used to bootstrap your p
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+You can develop and run the tests on any computer, with no radio hardware attached. The SDR hardware is only needed for live capture on the Pi.
 
 ### Prerequisites
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
+Software:
+* Python 3.14 or newer
   ```sh
-  npm install npm@latest -g
+  python --version
   ```
+* [Raspberry Pi Imager](https://www.raspberrypi.com/software/), to flash the Pi's operating system
+
+Hardware (for live capture):
+* Raspberry Pi 5 (4GB)
+* Official Raspberry Pi 27W USB-C power supply
+* Raspberry Pi Active Cooler
+* RTL-SDR Blog V3 dongle with dipole antenna kit
+* USB 3.0 flash drive (32GB or larger) to boot the Pi
 
 ### Installation
 
-_Below is an example of how you can instruct your audience on installing and setting up your app. This template doesn't rely on any external dependencies or services._
+1. Clone the repo
+   ```sh
+   git clone https://github.com/grandmas-code-mill/pi-rf-monitor.git
+   cd pi-rf-monitor/edge
+   ```
+2. Create and activate a virtual environment
+   ```sh
+   python -m venv .venv
+   source .venv/bin/activate
+   ```
+3. Install the project with development tools
+   ```sh
+   pip install -e ".[dev]"
+   ```
+4. Confirm everything works by running the linter and tests
+   ```sh
+   ruff check .
+   pytest
+   ```
+5. On the Raspberry Pi, also install the SDR driver bindings
+   ```sh
+   pip install -e ".[sdr]"
+   ```
 
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
-   ```sh
-   git clone https://github.com/github_username/repo_name.git
-   ```
-3. Install NPM packages
-   ```sh
-   npm install
-   ```
-4. Enter your API in `config.js`
-   ```js
-   const API_KEY = 'ENTER YOUR API';
-   ```
-5. Change git remote url to avoid accidental pushes to base project
-   ```sh
-   git remote set-url origin github_username/repo_name
-   git remote -v # confirm the changes
-   ```
+<!-- TODO: replace with a link to docs/pi-setup.md once Story 2 is complete -->
+Full Raspberry Pi provisioning steps (OS install, SSH hardening, firewall, and RTL-SDR drivers) will live in `docs/pi-setup.md`.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -150,9 +162,16 @@ _Below is an example of how you can instruct your audience on installing and set
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
+<!-- TODO: confirm these commands match your CLI once Sprint 1 is complete -->
+The `rfmon` command-line tool is under active development. Planned commands:
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+```sh
+rfmon capture --freq 98.1e6 --seconds 5   # Record 5 seconds of IQ samples at 98.1 MHz
+rfmon spectrum --freq 98.1e6              # Show a live spectrogram
+rfmon fm --freq 98.1e6                    # Demodulate an FM station to a WAV file
+```
+
+_Plain-language explanations of the DSP (FFTs, windowing, decimation, and FM demodulation) will live in `docs/dsp-notes.md`._
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -161,15 +180,26 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
-- [x] Add Changelog
-- [x] Add back to top links
-- [ ] Add Additional Templates w/ Examples
-- [ ] Add "components" document to easily copy & paste sections of the readme
-- [ ] Multi-language Support
-    - [ ] Chinese
-    - [ ] Spanish
-
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a full list of proposed features (and known issues).
+- [x] Project setup with automated linting and tests (CI)
+- [ ] Provision the Raspberry Pi with repeatable, hardened setup scripts
+- [ ] **MVP signal capture**
+    - [ ] Capture and save IQ samples
+    - [ ] Live spectrum and spectrogram
+    - [ ] FM demodulation to audio
+    - [ ] Hardware-free tests with synthetic signals
+- [ ] **ADS-B aircraft tracking and DSP depth**
+    - [ ] Decode aircraft positions at 1090 MHz
+    - [ ] Filter design prototyped in MATLAB
+- [ ] **Cloud pipeline**
+    - [ ] Containerize with Docker
+    - [ ] Stream data from the Pi to AWS
+    - [ ] Kubernetes backend and live dashboard with an aircraft map
+    - [ ] Continuous deployment
+- [ ] **ML signal classifier**
+    - [ ] Train a CNN to label signal types from spectrograms
+- [ ] **Stretch goals**
+    - [ ] Decode NOAA weather satellite images
+    - [ ] Support multiple Pi sensor nodes
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -178,10 +208,9 @@ See the [open issues](https://github.com/othneildrew/Best-README-Template/issues
 <!-- CONTRIBUTING -->
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+This is a personal portfolio project, but suggestions and bug reports are welcome. Open an issue with the tag "bug" or "enhancement."
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
+To propose a change:
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -189,11 +218,7 @@ Don't forget to give the project a star! Thanks again!
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-### Top contributors:
-
-<a href="https://github.com/othneildrew/Best-README-Template/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=othneildrew/Best-README-Template" alt="contrib.rocks image" />
-</a>
+Pull requests must pass CI (Ruff linting and pytest) before merging.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -202,7 +227,7 @@ Don't forget to give the project a star! Thanks again!
 <!-- LICENSE -->
 ## License
 
-Distributed under the Unlicense License. See `LICENSE.txt` for more information.
+Distributed under the Unlicense. See [`LICENSE`][license-url] for more information.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -211,9 +236,10 @@ Distributed under the Unlicense License. See `LICENSE.txt` for more information.
 <!-- CONTACT -->
 ## Contact
 
-Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
+<!-- TODO: add your LinkedIn profile URL in the links section at the bottom -->
+Evan Morgan - [LinkedIn][linkedin-url]
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Project Link: [https://github.com/grandmas-code-mill/pi-rf-monitor](https://github.com/grandmas-code-mill/pi-rf-monitor)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -222,16 +248,11 @@ Project Link: [https://github.com/your_username/repo_name](https://github.com/yo
 <!-- ACKNOWLEDGMENTS -->
 ## Acknowledgments
 
-Use this space to list resources you find helpful and would like to give credit to. I've included a few of my favorites to kick things off!
-
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Malven's Flexbox Cheatsheet](https://flexbox.malven.co/)
-* [Malven's Grid Cheatsheet](https://grid.malven.co/)
+* [RTL-SDR Blog](https://www.rtl-sdr.com/), for hardware guides and drivers
+* [pyrtlsdr](https://github.com/pyrtlsdr/pyrtlsdr), Python bindings for the RTL-SDR
+* [Raspberry Pi Documentation](https://www.raspberrypi.com/documentation/)
+* [Best-README-Template](https://github.com/othneildrew/Best-README-Template)
 * [Img Shields](https://shields.io)
-* [GitHub Pages](https://pages.github.com)
-* [Font Awesome](https://fontawesome.com)
-* [React Icons](https://react-icons.github.io/react-icons/search)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -239,21 +260,18 @@ Use this space to list resources you find helpful and would like to give credit 
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=for-the-badge
-[contributors-url]: https://github.com/grandmas-code-mill/pi-rf-monitor/graphs/contributors?from=7%2F25%2F2026
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=for-the-badge
-[forks-url]: https://github.com/grandmas-code-mill/pi-rf-monitor//network/members
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=for-the-badge
-[stars-url]: https://github.com/grandmas-code-mill/pi-rf-monitor/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=for-the-badge
-[issues-url]: https://github.com/grandmas-code-mill/pi-rf-monitor/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
 [license-url]: https://github.com/grandmas-code-mill/pi-rf-monitor/blob/main/LICENSE
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://www.linkedin.com/feed/
-[product-screenshot]: images/screenshot.png
+[linkedin-url]: https://www.linkedin.com/in/YOUR-PROFILE
+[product-screenshot]: docs/images/screenshot.png
 [Python]: https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54
 [Python-url]: https://python.org/
-
-# pi-rf-monitor
-A Raspberry Pi, with the help of an RTL-SDR receives radio signals, processes them using DSP and classifies those signals, pushing them to AWS with a web dashboard and spectrum view.
+[NumPy]: https://img.shields.io/badge/numpy-013243?style=for-the-badge&logo=numpy&logoColor=white
+[NumPy-url]: https://numpy.org/
+[SciPy]: https://img.shields.io/badge/SciPy-8CAAE6?style=for-the-badge&logo=scipy&logoColor=white
+[SciPy-url]: https://scipy.org/
+[Matplotlib]: https://img.shields.io/badge/Matplotlib-11557C?style=for-the-badge&logo=python&logoColor=white
+[Matplotlib-url]: https://matplotlib.org/
+[RaspberryPi]: https://img.shields.io/badge/Raspberry%20Pi-A22846?style=for-the-badge&logo=raspberrypi&logoColor=white
+[RaspberryPi-url]: https://www.raspberrypi.com/
+[GitHubActions]: https://img.shields.io/badge/GitHub%20Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white
+[GitHubActions-url]: https://github.com/features/actions
