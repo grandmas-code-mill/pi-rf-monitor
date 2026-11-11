@@ -7,14 +7,17 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.13", "3.14"]
     defaults:
       run:
         working-directory: edge
     steps:
-      - uses: actions/checkout@v7         
-      - uses: actions/setup-python@v7     
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
-          python-version: "3.14"
+          python-version: ${{ matrix.python-version }}
       - run: pip install -e ".[dev]"       # project + dev tools
       - run: ruff check .                  # Lint
       - run: pytest                        # Test
