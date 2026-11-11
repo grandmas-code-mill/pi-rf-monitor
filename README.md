@@ -152,8 +152,7 @@ Hardware (for live capture):
    pip install -e ".[sdr]"
    ```
 
-<!-- TODO: replace with a link to docs/pi-setup.md once Story 2 is complete -->
-Full Raspberry Pi provisioning steps (OS install, SSH hardening, firewall, and RTL-SDR drivers) will live in `docs/pi-setup.md`.
+Full Raspberry Pi provisioning steps (OS install, SSH hardening, firewall, and RTL-SDR drivers) are in [docs/pi-setup.md](docs/pi-setup.md).
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
