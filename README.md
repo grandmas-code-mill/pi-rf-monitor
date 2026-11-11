@@ -1,276 +1,126 @@
-<!-- Improved compatibility of back to top link: See: https://github.com/othneildrew/Best-README-Template/pull/73 -->
-<a id="readme-top"></a>
-
-
-
-<!-- PROJECT SHIELDS -->
-<!--
-*** Reference-style links are used for readability.
-*** See the bottom of this document for the link definitions.
-*** https://www.markdownguide.org/basic-syntax/#reference-style-links
--->
-
 [![CI](https://github.com/grandmas-code-mill/pi-rf-monitor/actions/workflows/ci.yml/badge.svg)](https://github.com/grandmas-code-mill/pi-rf-monitor/actions/workflows/ci.yml)
+# pi-rf-monitor
 
-
-
-<!-- PROJECT LOGO -->
-<br />
-<div align="center">
-  <a href="https://github.com/grandmas-code-mill/pi-rf-monitor/tree/main">
-    <img src="docs/images/readme_image2.png" alt="Logo" width="80" height="80">
-  </a>
-
-  <h3 align="center">pi-rf-monitor</h3>
-
-  <p align="center">
-    A Raspberry Pi edge sensor that listens to real radio signals, processes them with DSP, and streams the results to a cloud dashboard.
-    <br />
-    <a href="docs/"><strong>Explore the docs »</strong></a>
-    <br />
-    <br />
-    <!-- TODO: link to a demo video or GIF once Sprint 1 is complete -->
-    <a href="#usage">View Demo</a>
-    &middot;
-    <a href="https://github.com/grandmas-code-mill/pi-rf-monitor/issues/new?labels=bug">Report Bug</a>
-    &middot;
-    <a href="https://github.com/grandmas-code-mill/pi-rf-monitor/issues/new?labels=enhancement">Request Feature</a>
-  </p>
-</div>
-
-
-
-<!-- TABLE OF CONTENTS -->
-<details>
-  <summary>Table of Contents</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">About The Project</a>
-      <ul>
-        <li><a href="#built-with">Built With</a></li>
-      </ul>
-    </li>
-    <li>
-      <a href="#getting-started">Getting Started</a>
-      <ul>
-        <li><a href="#prerequisites">Prerequisites</a></li>
-        <li><a href="#installation">Installation</a></li>
-      </ul>
-    </li>
-    <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
-    <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgments">Acknowledgments</a></li>
-  </ol>
-</details>
-
-
-
-<!-- ABOUT THE PROJECT -->
-## About The Project
-
-<!-- TODO: replace with a screenshot or GIF of the live spectrogram -->
-[![pi-rf-monitor screenshot][product-screenshot]](#usage)
-
-pi-rf-monitor turns a Raspberry Pi and a low-cost RTL-SDR receiver into a radio monitoring station. The Pi captures raw radio samples, processes them with digital signal processing (DSP), and identifies what it hears. Results stream to AWS, where a web dashboard shows a live spectrum view and a map of nearby aircraft.
-
-What it does:
-* **Captures RF** from roughly 24 MHz to 1.7 GHz, and saves raw IQ samples for live or offline processing
-* **Visualizes the spectrum** with a live scrolling spectrogram (waterfall), labeled in real frequencies
-* **Demodulates FM broadcast radio** into listenable audio, proving the full DSP chain end to end
-* **Tracks aircraft** by decoding ADS-B position broadcasts at 1090 MHz *(planned)*
-* **Classifies signals** with a small neural network trained on spectrograms *(planned)*
-* **Streams to the cloud** with a containerized backend on AWS and Kubernetes *(planned)*
+A Raspberry Pi edge sensor that listens to real radio signals, processes them with digital signal processing (DSP), and is designed to stream the results to a cloud dashboard.
 
 The project is receive-only. It never transmits.
 
-Development runs in two-week Scrum sprints tracked in Jira, with every change going through a pull request and automated linting and tests in GitHub Actions.
+**Status:** Sprint 1 of a two-week Scrum cadence. The Pi is running headless with key-only SSH, and the DSP is being built and tested against published IQ recordings while the RTL-SDR receiver is on order. Live capture is the one piece that waits on hardware. See [Roadmap](#roadmap).
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+## Hardware
 
+| Part | Role |
+|---|---|
+| Raspberry Pi 5 (4GB) | Edge computer that runs capture and DSP |
+| Official 27W USB-C power supply | Stable power, including enough current to boot from USB |
+| Raspberry Pi Active Cooler | Keeps sustained DSP from throttling the CPU |
+| USB 3.0 flash drive (32GB+) | Boot drive, flashed with Raspberry Pi Imager |
+| RTL-SDR Blog V3 with dipole antenna kit | Receiver covering roughly 24 MHz to 1.7 GHz *(on order)* |
 
+None of the hardware is needed to develop or run the tests. Every test runs on synthetic signals or recordings.
 
-### Built With
+## How it works
 
-* [![Python][Python]][Python-url]
-* [![NumPy][NumPy]][NumPy-url]
-* [![SciPy][SciPy]][SciPy-url]
-* [![Matplotlib][Matplotlib]][Matplotlib-url]
-* [![Raspberry Pi][RaspberryPi]][RaspberryPi-url]
-* [![GitHub Actions][GitHubActions]][GitHubActions-url]
+Samples reach the DSP through one sample-source interface, so the processing code doesn't care where they came from.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- GETTING STARTED -->
-## Getting Started
-
-You can develop and run the tests on any computer, with no radio hardware attached. The SDR hardware is only needed for live capture on the Pi.
-
-### Prerequisites
-
-Software:
-* Python 3.14 or newer
-  ```sh
-  python --version
-  ```
-* [Raspberry Pi Imager](https://www.raspberrypi.com/software/), to flash the Pi's operating system
-
-Hardware (for live capture):
-* Raspberry Pi 5 (4GB)
-* Official Raspberry Pi 27W USB-C power supply
-* Raspberry Pi Active Cooler
-* RTL-SDR Blog V3 dongle with dipole antenna kit
-* USB 3.0 flash drive (32GB or larger) to boot the Pi
-
-### Installation
-
-1. Clone the repo
-   ```sh
-   git clone https://github.com/grandmas-code-mill/pi-rf-monitor.git
-   cd pi-rf-monitor/edge
-   ```
-2. Create and activate a virtual environment
-   ```sh
-   python -m venv .venv
-   source .venv/bin/activate
-   ```
-3. Install the project with development tools
-   ```sh
-   pip install -e ".[dev]"
-   ```
-4. Confirm everything works by running the linter and tests
-   ```sh
-   ruff check .
-   pytest
-   ```
-5. On the Raspberry Pi, also install the SDR driver bindings
-   ```sh
-   pip install -e ".[sdr]"
-   ```
-
-Full Raspberry Pi provisioning steps (OS install, SSH hardening, firewall, and RTL-SDR drivers) are in [docs/pi-setup.md](docs/pi-setup.md).
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- USAGE EXAMPLES -->
-## Usage
-
-<!-- TODO: confirm these commands match your CLI once Sprint 1 is complete -->
-The `rfmon` command-line tool is under active development. Planned commands:
-
-```sh
-rfmon capture --freq 98.1e6 --seconds 5   # Record 5 seconds of IQ samples at 98.1 MHz
-rfmon spectrum --freq 98.1e6              # Show a live spectrogram
-rfmon fm --freq 98.1e6                    # Demodulate an FM station to a WAV file
+```mermaid
+flowchart LR
+    A[Synthetic signals] --> S{Sample source}
+    B[IQ recordings + SigMF metadata] --> S
+    C[RTL-SDR live capture] -.->|waits on hardware| S
+    S --> D[DSP: FFT, spectrogram, FM demodulation]
+    D --> E[Spectrogram plots and WAV audio]
+    D -.->|planned| F[ADS-B, AWS dashboard, ML classifier]
 ```
 
-_Plain-language explanations of the DSP (FFTs, windowing, decimation, and FM demodulation) will live in `docs/dsp-notes.md`._
+### 1. Sample sources
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+- **Synthetic:** generated tones and FM-modulated signals with known answers, used by the tests.
+- **Recordings:** published IQ files, each with a SigMF `.sigmf-meta` file that records its sample rate, center frequency, and data type.
+- **Live SDR:** the RTL-SDR, added behind the same interface once the hardware arrives.
 
+### 2. Signal processing
 
+1. **Spectrum:** a Hann-windowed FFT with power in dB, and a scrolling spectrogram (waterfall) with the frequency axis in real MHz.
+2. **FM demodulation:** shift the station to the center, low-pass filter, decimate, demodulate by the phase difference between consecutive samples, apply de-emphasis, and write a 48 kHz WAV file.
 
-<!-- ROADMAP -->
+The Python version is the reference implementation. A C++ core for the speed-critical steps is planned, and it will be tested against the Python output on the same inputs.
+
+## Data
+
+Recordings are downloaded by a script rather than committed, and `data/samples/` is git-ignored.
+
+| Recording | Format | Used for | Source |
+|---|---|---|---|
+| FM broadcast | IQ recording | Spectrum, spectrogram, FM demodulation | [PySDR](https://pysdr.org/content/rds.html) |
+| ADS-B (`modes1.bin`) | 8-bit unsigned IQ at 2 MS/s, the RTL-SDR's native format | Loader tests, future ADS-B decoding | [dump1090](https://github.com/antirez/dump1090) test file (BSD license) |
+
+## Design decisions
+
+- **Receive-only.** The project never transmits, so it needs no transmitter license.
+- **Hardware-free tests.** CI checks the DSP against signals with known answers, such as a tone that must peak in a specific FFT bin, so correctness never depends on what's on the air.
+- **One interface for every sample source.** The DSP is being built on recordings while the receiver is on order. Live capture will plug in without changes to the processing code.
+- **Metadata travels with the data.** A raw IQ file is just numbers. SigMF files keep the sample rate and center frequency next to each recording, so the loader reads them instead of hard-coding them.
+- **Python first, C++ where it counts.** NumPy is quick to write and easy to inspect. C++ is reserved for steps that need to run continuously on the Pi, and only once benchmarks show it helps.
+
+## Known limitations
+
+- **No live capture yet.** Until the RTL-SDR arrives, all processing runs on recordings made with other hardware in other places.
+- **Real-time performance is unmeasured.** Whether the Python DSP keeps up with a live stream on the Pi will be benchmarked before any C++ work begins.
+- **The ADS-B test file is short and old.** `modes1.bin` is a brief 2013 capture with only a few aircraft, so it's enough for decoder tests but not for a busy map.
+
 ## Roadmap
 
-- [x] Project setup with automated linting and tests (CI)
-- [ ] Provision the Raspberry Pi with repeatable, hardened setup scripts
-- [ ] **MVP signal capture**
-    - [ ] Capture and save IQ samples
-    - [ ] Live spectrum and spectrogram
-    - [ ] FM demodulation to audio
-    - [ ] Hardware-free tests with synthetic signals
-- [ ] **ADS-B aircraft tracking and DSP depth**
-    - [ ] Decode aircraft positions at 1090 MHz
-    - [ ] Filter design prototyped in MATLAB
-- [ ] **Cloud pipeline**
-    - [ ] Containerize with Docker
-    - [ ] Stream data from the Pi to AWS
-    - [ ] Kubernetes backend and live dashboard with an aircraft map
-    - [ ] Continuous deployment
-- [ ] **ML signal classifier**
-    - [ ] Train a CNN to label signal types from spectrograms
-- [ ] **Stretch goals**
-    - [ ] Decode NOAA weather satellite images
-    - [ ] Support multiple Pi sensor nodes
+- [x] **Foundation:** Jira Scrum board, pull-request workflow, CI with Ruff and pytest
+- [ ] **Pi platform:** headless OS on USB, key-only SSH, ufw firewall, Bash setup scripts ([setup guide](docs/pi-setup.md))
+- [ ] **DSP core on recordings:** IQ loader with SigMF, FFT and spectrogram, FM demodulation, synthetic-signal tests
+- [ ] **v0.1.0 release**
+- [ ] **Live RF capture:** RTL-SDR source, `rtl_test`, recordings of local signals
+- [ ] **ADS-B and MATLAB:** decode aircraft positions at 1090 MHz, prototype filter designs in MATLAB
+- [ ] **C++ DSP core:** speed-critical steps in C++ via pybind11, benchmarked against NumPy
+- [ ] **Cloud pipeline:** Docker, streaming from the Pi to AWS, a Kubernetes backend, and a dashboard with an aircraft map
+- [ ] **ML signal classifier:** a CNN that labels signal types from spectrograms
+- [ ] **Stretch:** NOAA weather satellite images, multiple Pi sensor nodes
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+## Running it
 
+Requires Python 3.14+.
 
+```bash
+git clone https://github.com/grandmas-code-mill/pi-rf-monitor.git
+cd pi-rf-monitor/edge
+python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+ruff check .
+pytest
+```
 
-<!-- CONTRIBUTING -->
-## Contributing
+On the Raspberry Pi, also install the SDR bindings with `pip install -e ".[sdr]"`. Provisioning the Pi itself (OS install, SSH hardening, firewall, and drivers) is covered in [docs/pi-setup.md](docs/pi-setup.md).
 
-This is a personal portfolio project, but suggestions and bug reports are welcome. Open an issue with the tag "bug" or "enhancement."
+The `rfmon` command-line tool is in development. Planned commands:
 
-To propose a change:
+```bash
+rfmon spectrum --file data/samples/<recording>   # Spectrogram of a recording
+rfmon fm --file data/samples/<recording>         # Demodulate FM to a WAV file
+rfmon capture --freq 98.1e6 --seconds 5          # Record live IQ samples (needs the RTL-SDR)
+```
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+## Project structure
 
-Pull requests must pass CI (Ruff linting and pytest) before merging.
+```
+edge/rfmon/                  Python package (DSP, sample sources, CLI)
+edge/tests/                  pytest suite, run by CI with no hardware
+edge/pyproject.toml          dependencies, Ruff and pytest settings
+docs/pi-setup.md             Raspberry Pi provisioning guide
+.github/workflows/ci.yml     lint and test on every push and pull request
+LICENSE                      The Unlicense
+```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- LICENSE -->
 ## License
 
-Distributed under the Unlicense. See [`LICENSE`][license-url] for more information.
+The Unlicense. See `LICENSE`.
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+## Credits
 
-
-
-<!-- CONTACT -->
-## Contact
-
-<!-- TODO: add your LinkedIn profile URL in the links section at the bottom -->
-Evan Morgan - [LinkedIn][linkedin-url]
-
-Project Link: [https://github.com/grandmas-code-mill/pi-rf-monitor](https://github.com/grandmas-code-mill/pi-rf-monitor)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- ACKNOWLEDGMENTS -->
-## Acknowledgments
-
-* [RTL-SDR Blog](https://www.rtl-sdr.com/), for hardware guides and drivers
-* [pyrtlsdr](https://github.com/pyrtlsdr/pyrtlsdr), Python bindings for the RTL-SDR
-* [Raspberry Pi Documentation](https://www.raspberrypi.com/documentation/)
-* [Best-README-Template](https://github.com/othneildrew/Best-README-Template)
-* [Img Shields](https://shields.io)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[license-url]: https://github.com/grandmas-code-mill/pi-rf-monitor/blob/main/LICENSE
-[linkedin-url]: https://www.linkedin.com/in/YOUR-PROFILE
-[product-screenshot]: docs/images/screenshot.png
-[Python]: https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54
-[Python-url]: https://python.org/
-[NumPy]: https://img.shields.io/badge/numpy-013243?style=for-the-badge&logo=numpy&logoColor=white
-[NumPy-url]: https://numpy.org/
-[SciPy]: https://img.shields.io/badge/SciPy-8CAAE6?style=for-the-badge&logo=scipy&logoColor=white
-[SciPy-url]: https://scipy.org/
-[Matplotlib]: https://img.shields.io/badge/Matplotlib-11557C?style=for-the-badge&logo=python&logoColor=white
-[Matplotlib-url]: https://matplotlib.org/
-[RaspberryPi]: https://img.shields.io/badge/Raspberry%20Pi-A22846?style=for-the-badge&logo=raspberrypi&logoColor=white
-[RaspberryPi-url]: https://www.raspberrypi.com/
-[GitHubActions]: https://img.shields.io/badge/GitHub%20Actions-2088FF?style=for-the-badge&logo=githubactions&logoColor=white
-[GitHubActions-url]: https://github.com/features/actions
+[RTL-SDR Blog](https://www.rtl-sdr.com/) for hardware guides and drivers, [pyrtlsdr](https://github.com/pyrtlsdr/pyrtlsdr) for the Python bindings, [PySDR](https://pysdr.org/) for DSP explanations and the FM recording, and the [Raspberry Pi documentation](https://www.raspberrypi.com/documentation/).
