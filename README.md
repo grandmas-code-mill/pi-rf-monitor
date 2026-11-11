@@ -84,7 +84,7 @@ Recordings are downloaded by a script rather than committed, and `data/samples/`
 
 ## Running it
 
-Requires Python 3.14+.
+Requires Python 3.13+.
 
 ```bash
 git clone https://github.com/grandmas-code-mill/pi-rf-monitor.git

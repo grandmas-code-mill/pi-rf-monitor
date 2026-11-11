@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pi-rf-monitor"
-version = "1.0.0a1"
-requires-python = ">=3.14" # Earliest stable release available for download on all platforms - 2026
+version = "0.1.0"
+requires-python = ">=3.13"
 dependencies = [
     "numpy",
     "scipy",
