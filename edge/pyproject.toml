@@ -19,8 +19,11 @@ keywords = ["raspbian", "raspberry pi", "rtlsdr", "radio", "DSP", "AWS"]
 sdr = ["pyrtlsdr"]          # For RTL-SDR dongle when connected to Pi
 dev = ["pytest", "ruff"]    # Linting and unit testing.
 
+[tool.setuptools]
+packages = ["rfmon"] # python package
+
 [project.scripts]
-rfmon = "rfmon.cli:main"  
+rfmon = "rfmon.cli:main"
 
 [tool.ruff]
 line-length = 100

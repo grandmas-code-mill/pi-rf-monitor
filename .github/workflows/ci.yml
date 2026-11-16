@@ -20,4 +20,5 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - run: pip install -e ".[dev]"       # project + dev tools
       - run: ruff check .                  # Lint
+      - run: cmake -S cpp -B cpp/build && cmake --build cpp/build # C++ Build
       - run: pytest                        # Test
