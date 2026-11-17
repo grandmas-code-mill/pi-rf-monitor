@@ -1,4 +1,4 @@
-"""load iq recordings as complex64 sample arrays scaled to about -1..+1."""
+# load iq recordings as complex64 sample arrays scaled to about -1..+1.
 
 from pathlib import Path
 
