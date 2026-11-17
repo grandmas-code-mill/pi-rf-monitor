@@ -45,8 +45,9 @@ flowchart LR
 
 ### Next (v0.2.0)
 
-1. **Spectrum:** a Hann-windowed FFT with power in dB, and a spectrogram (waterfall) with the frequency axis in real MHz.
-2. **FM demodulation:** shift a station to the center, low-pass filter, decimate, demodulate by the phase difference between consecutive samples, apply de-emphasis, and write a 48 kHz WAV file.
+1.**C++ IQ Converter**: an IQ Converter that converts cu8 files to cf32 files for the IQ Loader to read.
+2. **Spectrum:** a Hann-windowed FFT with power in dB, and a spectrogram (waterfall) with the frequency axis in real MHz.
+3. **FM demodulation:** shift a station to the center, low-pass filter, decimate, demodulate by the phase difference between consecutive samples, apply de-emphasis, and write a 48 kHz WAV file.
 
 The Python version is the reference implementation. C++ versions of the speed-critical steps will be tested against it on the same inputs.
 
