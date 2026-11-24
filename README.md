@@ -5,7 +5,7 @@ A Raspberry Pi edge sensor for listening to real radio signals and processing th
 
 The project is receive-only. It never transmits.
 
-![Waterfall of a live FM capture](docs/img/fm-waterfall.png)
+![Waterfall of a live FM capture](docs/images/fm-waterfall.png)
 
 *A 5-second live capture centered on 100.9 MHz, recorded on the Raspberry Pi 5 with an RTL-SDR and drawn with `rfmon capture` and `rfmon waterfall`. The bright band in the middle is the 100.9 MHz FM station; other signals show at about 100.1 and 101.7 MHz. Time runs upward.*
 
