@@ -1,0 +1,28 @@
+# rfmon-capture.service: record one short rtl-sdr capture at boot (or on demand).
+# installed by scripts/install_capture_service.sh, which fills in @USER@ and @REPO@.
+# settings (frequency, length, gain) live in /etc/default/rfmon-capture.
+
+[Unit]
+Description=rfmon: record a short RTL-SDR capture
+# wait until the disk is ready to write to
+After=local-fs.target
+
+# give up after 3 failed tries in 2 minutes instead of looping forever
+StartLimitIntervalSec=120
+StartLimitBurst=3
+
+[Service]
+# run once and exit, instead of staying running like a server
+Type=oneshot
+User=@USER@
+WorkingDirectory=@REPO@
+EnvironmentFile=/etc/default/rfmon-capture
+ExecStart=@REPO@/edge/.venv/bin/rfmon capture -f ${RFMON_FREQ} -d ${RFMON_SECONDS} $RFMON_EXTRA_ARGS
+
+# the dongle can take a few seconds to show up after boot, so retry
+Restart=on-failure
+RestartSec=10
+
+[Install]
+# start as part of a normal boot
+WantedBy=multi-user.target
