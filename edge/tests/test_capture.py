@@ -11,7 +11,7 @@ from rfmon.cli import main
 
 
 def fake_rtl_sdr(fill_bytes=None, returncode=0, stderr=""):
-    # return a stand-in for subprocess.run that writes the file rtl_sdr would.
+    """return a stand-in for subprocess.run that writes the file rtl_sdr would."""
     calls = []
 
     def run(command, **kwargs):
@@ -79,8 +79,11 @@ def test_default_path_names_the_frequency():
 
 
 def test_cli_capture_then_waterfall_uses_sidecar(tmp_path, monkeypatch, capsys):
-    monkeypatch.setattr(cap.subprocess, "run", fake_rtl_sdr())
-    monkeypatch.setattr(cap.shutil, "which", lambda name: "/usr/bin/rtl_sdr")
+    # hand the fake radio to capture() only; patching subprocess.run itself would also
+    # catch other programs, like the fc-list call matplotlib makes on a fresh machine
+    real_capture = cap.capture
+    fake = fake_rtl_sdr()
+    monkeypatch.setattr(cap, "capture", lambda *args, **kwargs: real_capture(*args, **kwargs, run=fake))
     out = tmp_path / "fm.cu8"
     assert main(["capture", "-f", "101.1e6", "-d", "0.1", "-o", str(out)]) == 0
     assert "rfmon waterfall" in capsys.readouterr().out
