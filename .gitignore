@@ -5,6 +5,7 @@ __pycache__/
 
 # Downloaded IQ Recordings
 /data/samples/
+/data/captures/
 
 # C extensions
 *.so
