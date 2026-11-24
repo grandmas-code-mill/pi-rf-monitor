@@ -96,9 +96,39 @@ edge/.venv/bin/rfmon --version
 
 Each recording should report `OK` against its checksum, and all tests should pass, including the real-recording tests that skip in CI.
 
-## 9. RTL-SDR drivers (coming with the receiver)
+## 9. RTL-SDR drivers
 
-`scripts/install_rtlsdr.sh` will install the RTL-SDR drivers and block the default TV-tuner driver that claims the dongle. It will be added once the receiver arrives.
+Plug in the receiver, then:
+
+```bash
+./scripts/install_rtlsdr.sh
+```
+
+It installs `rtl-sdr`, blocks the TV-tuner driver that would otherwise claim the dongle, gives your user USB access through the `plugdev` group, and runs `rtl_test`. A single `lost at least N bytes` at the start is normal. If it stops at the `plugdev` check, log out and back in, then run it again. Reboot once afterwards so the driver block applies on every boot.
+
+Try a capture and a waterfall (use a strong local FM station):
+
+```bash
+source edge/.venv/bin/activate
+rfmon capture -f 101.1e6
+rfmon waterfall data/captures/<file>.cu8
+```
+
+## 10. Capture at boot (systemd)
+
+```bash
+./scripts/install_capture_service.sh
+```
+
+This installs `rfmon-capture.service`, which records one capture each time the Pi boots, and runs it once to test it. Captures go to `data/captures/`.
+
+| Task | Command |
+|---|---|
+| Record one now | `sudo systemctl start rfmon-capture` |
+| See the last run | `systemctl status rfmon-capture` |
+| Read its log | `journalctl -u rfmon-capture -n 30` |
+| Change station, length, or gain | `sudoedit /etc/default/rfmon-capture` |
+| Stop running at boot | `sudo systemctl disable rfmon-capture` |
 
 ## Updating the Pi
 
@@ -117,4 +147,5 @@ git pull
 | `REMOTE HOST IDENTIFICATION HAS CHANGED` | Re-flashing gave the Pi a new host key | `ssh-keygen -R raspberry-pi.local`, then connect again |
 | `Permission denied` running a script | The executable bit isn't set in your clone | `git pull` the latest version, or run it with `bash scripts/<name>.sh` |
 | `git pull` refuses: local changes would be overwritten | A file was edited or `chmod`ed on the Pi | `git restore .`, then `git pull` |
+| `rfmon-capture` fails right after boot | The dongle wasn't ready yet; the service retries up to 3 times, 10 s apart | Check `journalctl -u rfmon-capture`; if `usb_claim_interface` appears, re-run `install_rtlsdr.sh` and reboot |
 | The fan spins at boot, then stops | Normal: the Active Cooler only runs once the CPU warms up (around 50°C) | Nothing to fix; check with `vcgencmd measure_temp` |
